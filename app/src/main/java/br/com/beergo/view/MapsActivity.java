@@ -7,10 +7,13 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.ui.IconGenerator;
 
 import br.com.beergo.R;
+import br.com.beergo.adapter.BeerInfoWindowAdapter;
 import br.com.beergo.domain.dto.BarMapsRequest;
 import br.com.beergo.domain.dto.MapsLocation;
 import br.com.beergo.domain.dto.MapsResult;
@@ -27,6 +30,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private GoogleMapsRestService mapsRestService;
     private LocationProvider locationProvider;
+    private LatLng currentLocation = null;
+    private IconGenerator iconFactory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +41,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        iconFactory = new IconGenerator(this);
         locationProvider = new LocationProvider(this);
         mapsRestService = new GoogleMapsRestService(this);
     }
@@ -52,7 +58,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        styleMap(googleMap);
         mMap = googleMap;
+        mMap.setInfoWindowAdapter(new BeerInfoWindowAdapter(this));
         mMap.setMyLocationEnabled(true);
         mMap.animateCamera(CameraUpdateFactory.zoomTo(17.0f));
         locationProvider.subscribe(new OnLocationChanged() {
@@ -71,15 +79,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
 
-                LatLng currentLocation = new LatLng(location.getLat(), location.getLng());
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+                if (currentLocation == null)
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLat(), location.getLng())));
+
+                currentLocation = new LatLng(location.getLat(), location.getLng());
             }
         });
     }
 
+    private void styleMap(GoogleMap googleMap) {
+        googleMap.setMyLocationEnabled();
+    }
+
     private void addMarker(MapsResult mapsResult) {
+        iconFactory.setTextAppearance(R.style.iconMarkerTextAppearence);
+        iconFactory.setBackground(getResources().getDrawable(R.drawable.ic_beer));
         LatLng location = new LatLng(mapsResult.getCoordenadas().getLatitude(), mapsResult.getCoordenadas().getLongitude());
-        mMap.addMarker(new MarkerOptions().position(location).title(mapsResult.getNome()));
+        mMap.addMarker(new MarkerOptions().position(location).title(mapsResult.getNome()).snippet(mapsResult.snippet())
+                .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("42%"))))
+                .showInfoWindow();
     }
 
 }

@@ -11,6 +11,8 @@ public class MapsResult {
     private MapsOpeningHours disponibilidade;
     @SerializedName("geometry")
     private MapsGeometry coordenadas;
+    @SerializedName("percent_desconto")
+    private int percentDesconto;
 
     public String getNome() {
         return nome;
@@ -20,11 +22,25 @@ public class MapsResult {
         return avaliacao;
     }
 
-    public boolean isAberto(){
+    public boolean isAberto() {
+        if (disponibilidade == null)
+            return false;
+
         return disponibilidade.isOpen();
     }
 
     public MapsGeometry getCoordenadas() {
         return coordenadas;
+    }
+
+    public String snippet() {
+        StringBuilder sb = new StringBuilder()
+                .append("<b>" + nome + "</b><br>")
+                .append("<b>Desconto de até: 42%</b><br>")
+                .append("<b>Avaliação: </b>")
+                .append(String.valueOf(avaliacao))
+                .append("<br>")
+                .append(isAberto() ? "<b>Aberto</b>" : "<b>Fechado</b>");
+        return sb.toString();
     }
 }
