@@ -1,7 +1,14 @@
 package br.com.beergo.view;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -9,6 +16,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.ui.IconGenerator;
 
@@ -25,8 +33,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
     private GoogleMapsRestService mapsRestService;
     private LocationProvider locationProvider;
@@ -46,6 +53,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapsRestService = new GoogleMapsRestService(this);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_maps, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.code:
+                callCodeActivity();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void callCodeActivity() {
+        Intent i = new Intent(this, CodeActivity.class);
+        startActivity(i);
+    }
 
     /**
      * Manipulates the map once available.
@@ -61,6 +90,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         styleMap(googleMap);
         mMap = googleMap;
         mMap.setInfoWindowAdapter(new BeerInfoWindowAdapter(this));
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         mMap.setMyLocationEnabled(true);
         mMap.animateCamera(CameraUpdateFactory.zoomTo(17.0f));
         locationProvider.subscribe(new OnLocationChanged() {
@@ -88,7 +127,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void styleMap(GoogleMap googleMap) {
-        googleMap.setMyLocationEnabled();
+        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.pokemon_go_maps_style));
     }
 
     private void addMarker(MapsResult mapsResult) {
