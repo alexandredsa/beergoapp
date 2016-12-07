@@ -66,9 +66,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             case R.id.code:
                 callCodeActivity();
                 return true;
+            case R.id.logout:
+                callLoginActivity();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void callLoginActivity() {
+        Intent i = new Intent(MapsActivity.this, LoginActivity.class);
+        startActivity(i);
+        finish();
     }
 
     private void callCodeActivity() {

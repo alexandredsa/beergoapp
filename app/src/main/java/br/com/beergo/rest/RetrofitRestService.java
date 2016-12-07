@@ -6,7 +6,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitRestService {
-    private static final String BEERGO_BASE_URL = "";
+    private static final String BEERGO_BASE_URL = "https://beergo-alexandredsa.c9users.io:8081";
     private static final String GOOGLE_MAPS_BASE_URL = "https://maps.googleapis.com/";
 
     public static Object initService(Class serviceClass, String baseUrl) {
