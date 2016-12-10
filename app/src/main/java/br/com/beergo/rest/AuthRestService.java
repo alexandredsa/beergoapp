@@ -17,4 +17,10 @@ public class AuthRestService {
         call = authAPI.login(userCredentials);
         call.enqueue(callback);
     }
+    public void signUp(UserCredentials userCredentials, Callback<UserDetail> callback) {
+        Call<UserDetail> call;
+        AuthAPI authAPI = (AuthAPI) RetrofitRestService.initBeerGOService(AuthAPI.class);
+        call = authAPI.signUp(userCredentials);
+        call.enqueue(callback);
+    }
 }
