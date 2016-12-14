@@ -26,5 +26,10 @@ public class MapsLocation {
     public void setLng(float lng) {
         this.lng = lng;
     }
+
+    @Override
+    public String toString() {
+        return lat + " ," + lng;
+    }
 }
 

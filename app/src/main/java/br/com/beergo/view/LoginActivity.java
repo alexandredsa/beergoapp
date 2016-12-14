@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -13,7 +14,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import br.com.beergo.R;
+import br.com.beergo.content.UserPreferences;
 import br.com.beergo.domain.dto.UserCredentials;
 import br.com.beergo.domain.dto.UserDetail;
 import br.com.beergo.rest.AuthRestService;
@@ -24,6 +28,7 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
     private EditText user, password;
     private ProgressDialog progress;
+    private UserPreferences userPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         user = (EditText) findViewById(R.id.user);
         password = (EditText) findViewById(R.id.password);
+        userPreferences = new UserPreferences(PreferenceManager.getDefaultSharedPreferences(this), new Gson());
     }
 
     @Override
@@ -41,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_login, menu);
         return true;
@@ -49,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.signup:
                 callSignUpActivity();
                 return true;
@@ -69,9 +75,10 @@ public class LoginActivity extends AppCompatActivity {
         new AuthRestService().login(new UserCredentials(user.getText().toString(), password.getText().toString()), new Callback<UserDetail>() {
             @Override
             public void onResponse(Call<UserDetail> call, Response<UserDetail> response) {
-                if (response.isSuccessful())
+                if (response.isSuccessful()) {
+                    userPreferences.saveUser(response.body());
                     callMapsActivity();
-                else
+                } else
                     Toast.makeText(LoginActivity.this, "Usuário e/ou senha inválido(s).", Toast.LENGTH_LONG).show();
 
                 progress.dismiss();
