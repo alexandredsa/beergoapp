@@ -59,7 +59,7 @@ public class MapsDTO {
     public String snippet() {
         StringBuilder sb = new StringBuilder()
                 .append("<b>" + name + "</b><br>")
-                .append("<b>Desconto de até: 42%</b><br>")
+                .append("<b>Desconto de até: " + String.format("%.2f", percentOff) + "%</b><br>")
                 .append("<b>Avaliação: </b>")
                 .append(String.valueOf(rating))
                 .append("<br>")

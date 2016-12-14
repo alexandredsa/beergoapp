@@ -28,7 +28,7 @@ public class RetrofitRestService {
     }
 
     public static Object initBeerGOService(Class serviceClass) {
-        return initService(serviceClass, BEERGO_DEV_BASE_URL);
+        return initService(serviceClass, BEERGO_BASE_URL);
     }
 
     @Deprecated

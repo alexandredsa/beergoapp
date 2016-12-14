@@ -14,7 +14,9 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="32dp"
+        android:background="#9c868986"
+        android:paddingBottom="10dp"
         android:layout_alignParentBottom="true">
         <TextView
             android:id="@+id/txtStatus"
@@ -23,8 +25,9 @@
             android:layout_alignParentRight="true"
             android:textSize="16sp"
             android:layout_marginRight="10dp"
+            android:layout_centerVertical="true"
             android:textStyle="bold"
-            android:textColor="#a75f31"
+            android:textColor="#328db7"
             android:text="João | Level 10"/>
     </RelativeLayout>
 </RelativeLayout>

@@ -48,6 +48,7 @@ public class CodeActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Toast.makeText(CodeActivity.this, user.getSummary(newUser), Toast.LENGTH_LONG).show();
                     userPreferences.saveUser(newUser);
+                    txtCode.setText("");
                 } else {
                     Toast.makeText(CodeActivity.this,
                             "Falha ao submeter código informado.\nVerifique se o código foi digitado corretamente.",
